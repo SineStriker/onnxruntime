@@ -1,2 +1,4 @@
 OrtGetApiBase
 OrtSessionOptionsAppendExecutionProvider_CPU
+__openvpi_get_random_seed
+__openvpi_set_random_seed

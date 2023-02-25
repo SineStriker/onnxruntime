@@ -34,3 +34,11 @@ void SetRandomSeed(int64_t seed) {
 
 }  // namespace utils
 }  // namespace onnxruntime
+
+int64_t __openvpi_get_random_seed(){
+  return onnxruntime::utils::GetRandomSeed();
+}
+
+void __openvpi_set_random_seed(int64_t seed){
+  onnxruntime::utils::SetRandomSeed(seed);
+}

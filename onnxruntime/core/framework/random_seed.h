@@ -26,5 +26,19 @@ int64_t GetRandomSeed();
  */
 void SetRandomSeed(int64_t seed);
 
-}  // namespace test
+}  // namespace utils
 }  // namespace onnxruntime
+
+#include "core/session/onnxruntime_c_api.h"
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+ORT_EXPORT int64_t ORT_API_CALL __openvpi_get_random_seed();
+
+ORT_EXPORT void ORT_API_CALL __openvpi_set_random_seed(int64_t seed);
+
+#ifdef __cplusplus
+}
+#endif

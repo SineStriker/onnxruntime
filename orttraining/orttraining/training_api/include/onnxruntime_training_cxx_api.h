@@ -155,6 +155,8 @@ class TrainingSession : public detail::Base<OrtTrainingSession> {
 
 void SetSeed(const int64_t seed);
 
+int64_t GetSeed();
+
 }  // namespace Ort
 
 #include "onnxruntime_training_cxx_inline.h"

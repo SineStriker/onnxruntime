@@ -403,6 +403,15 @@ ORT_API_STATUS_IMPL(OrtTrainingApis::TrainingSessionGetEvalModelInputName, _In_ 
   API_IMPL_END
 }
 
+ORT_API_STATUS_IMPL(OrtTrainingApis::GetSeed, _Out_ int64_t *seed) {
+  API_IMPL_BEGIN
+
+  *seed = onnxruntime::utils::GetRandomSeed();
+  return nullptr;
+
+  API_IMPL_END
+}
+
 static constexpr OrtTrainingApi ort_training_api = {
     // NOTE: The C# bindings depend on the API order within this struct. Since Training APIs are not officially
     // released, it is OK to change the order here, however a corresponding matching change should also be done in the
@@ -433,6 +442,7 @@ static constexpr OrtTrainingApi ort_training_api = {
     &OrtTrainingApis::TrainingSessionGetEvalModelInputCount,
     &OrtTrainingApis::TrainingSessionGetTrainingModelInputName,
     &OrtTrainingApis::TrainingSessionGetEvalModelInputName,
+    &OrtTrainingApis::GetSeed,
 };
 
 ORT_API(const OrtTrainingApi*, OrtTrainingApis::GetTrainingApi, uint32_t) {

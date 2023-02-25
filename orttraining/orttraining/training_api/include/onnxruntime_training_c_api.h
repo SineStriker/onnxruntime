@@ -370,6 +370,8 @@ struct OrtTrainingApi {
    */
   ORT_API2_STATUS(TrainingSessionGetEvalModelInputName, _In_ const OrtTrainingSession* sess, size_t index,
                   _In_ OrtAllocator* allocator, _Outptr_ char** output);
+
+  ORT_API2_STATUS(GetSeed, _Out_ int64_t *seed);
 };
 
 typedef struct OrtTrainingApi OrtTrainingApi;

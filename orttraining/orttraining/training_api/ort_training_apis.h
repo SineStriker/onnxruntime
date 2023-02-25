@@ -76,4 +76,6 @@ ORT_API_STATUS_IMPL(TrainingSessionGetTrainingModelInputName, _In_ const OrtTrai
 ORT_API_STATUS_IMPL(TrainingSessionGetEvalModelInputName, _In_ const OrtTrainingSession* sess, size_t index,
                     _In_ OrtAllocator* allocator, _Outptr_ char** output);
 
+ORT_API_STATUS_IMPL(GetSeed, _Out_ int64_t* seed);
+
 }  // namespace OrtTrainingApis

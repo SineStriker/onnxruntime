@@ -109,4 +109,10 @@ inline void SetSeed(const int64_t seed) {
   ThrowOnError(GetTrainingApi().SetSeed(seed));
 }
 
+inline int64_t GetSeed() {
+  int64_t seed = 0;
+  ThrowOnError(GetTrainingApi().GetSeed(&seed));
+  return seed;
+}
+
 }  // namespace Ort

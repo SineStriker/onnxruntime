@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace onnxruntime {
 namespace utils {
@@ -26,19 +27,25 @@ int64_t GetRandomSeed();
  */
 void SetRandomSeed(int64_t seed);
 
+// OpenVPI Addition
+bool isOpNondeterministic(const std::string& op);
+
+extern const char* SessionIdAttributeName;
+
+int64_t GetCurrentSessionId();
+
+struct SessionSpec {
+  int64_t seed;
+  int64_t taskId;
+
+  SessionSpec() : SessionSpec(0){};
+  SessionSpec(int64_t seed) : SessionSpec(seed, 0){};
+  SessionSpec(int64_t seed, int64_t taskId) : seed(seed), taskId(taskId){};
+};
+
+SessionSpec GetSessionSpec(int64_t key);
+
+void AccessOpenVPIRandomSeed(int type, int64_t key, int64_t value, int64_t *out);
+
 }  // namespace utils
 }  // namespace onnxruntime
-
-#include "core/session/onnxruntime_c_api.h"
-
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-ORT_EXPORT int64_t ORT_API_CALL __openvpi_get_random_seed();
-
-ORT_EXPORT void ORT_API_CALL __openvpi_set_random_seed(int64_t seed);
-
-#ifdef __cplusplus
-}
-#endif

@@ -46,6 +46,10 @@ class RandomNormal final : public OpKernel {
     TensorShapeVector shape;
     ORT_ENFORCE(info.GetAttrs("shape", shape).IsOK());
     shape_ = TensorShape(shape);
+
+    sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
+    nodeIndex_ = info.node().Index();
+    taskId_ = 0;
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -61,6 +65,10 @@ class RandomNormal final : public OpKernel {
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_;
   TensorShape shape_;
+
+  int64_t sessionId_;
+  size_t nodeIndex_;
+  mutable int64_t taskId_;
 };
 
 class RandomNormalLike final : public OpKernel {
@@ -84,6 +92,10 @@ class RandomNormalLike final : public OpKernel {
       ORT_ENFORCE(ONNX_NAMESPACE::TensorProto::DataType_IsValid(dtype_) && dtype_ != ONNX_NAMESPACE::TensorProto::UNDEFINED,
                   "Invalid dtype of ", dtype_);
     }
+
+    sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
+    nodeIndex_ = info.node().Index();
+    taskId_ = 0;
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -96,6 +108,10 @@ class RandomNormalLike final : public OpKernel {
   mutable std::default_random_engine generator_;
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  //optional and may be inferred
+
+  int64_t sessionId_;
+  size_t nodeIndex_;
+  mutable int64_t taskId_;
 };
 
 class RandomUniform final : public OpKernel {
@@ -122,6 +138,10 @@ class RandomUniform final : public OpKernel {
     TensorShapeVector shape;
     ORT_ENFORCE(info.GetAttrs("shape", shape).IsOK());
     shape_ = TensorShape(shape);
+
+    sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
+    nodeIndex_ = info.node().Index();
+    taskId_ = 0;
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -135,6 +155,10 @@ class RandomUniform final : public OpKernel {
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_;
   TensorShape shape_;
+
+  int64_t sessionId_;
+  size_t nodeIndex_;
+  mutable int64_t taskId_;
 };
 
 class RandomUniformLike final : public OpKernel {
@@ -157,6 +181,10 @@ class RandomUniformLike final : public OpKernel {
       ORT_ENFORCE(ONNX_NAMESPACE::TensorProto::DataType_IsValid(dtype_) && dtype_ != ONNX_NAMESPACE::TensorProto::UNDEFINED,
                   "Invalid dtype of ", dtype_);
     }
+
+    sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
+    nodeIndex_ = info.node().Index();
+    taskId_ = 0;
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -169,6 +197,10 @@ class RandomUniformLike final : public OpKernel {
   mutable std::default_random_engine generator_;
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  //optional and may be inferred
+
+  int64_t sessionId_;
+  size_t nodeIndex_;
+  mutable int64_t taskId_;
 };
 
 class Multinomial final : public OpKernel {
@@ -192,6 +224,10 @@ class Multinomial final : public OpKernel {
     }
     ORT_ENFORCE(ONNX_NAMESPACE::TensorProto::DataType_IsValid(output_dtype_) && output_dtype_ != ONNX_NAMESPACE::TensorProto::UNDEFINED,
                 "Invalid dtype of ", output_dtype_);
+
+    sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
+    nodeIndex_ = info.node().Index();
+    taskId_ = 0;
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -203,5 +239,9 @@ class Multinomial final : public OpKernel {
   mutable std::default_random_engine generator_;
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType output_dtype_;
+
+  int64_t sessionId_;
+  size_t nodeIndex_;
+  mutable int64_t taskId_;
 };
 }  // namespace onnxruntime

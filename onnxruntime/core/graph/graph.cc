@@ -29,6 +29,7 @@
 #include "core/graph/op.h"
 #include "core/graph/runtime_optimization_record_container.h"
 #include "core/graph/function_utils.h"
+#include "core/framework/random_seed.h"
 
 #if !defined(ORT_MINIMAL_BUILD)
 #include "core/graph/function.h"
@@ -857,6 +858,10 @@ void Node::Init(const std::string& name,
 #endif
       }
     }
+  }
+
+  if (utils::isOpNondeterministic(op_type)) {
+    AddAttribute(utils::SessionIdAttributeName, utils::GetCurrentSessionId());
   }
 }
 

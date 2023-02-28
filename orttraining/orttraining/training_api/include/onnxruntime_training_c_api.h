@@ -372,6 +372,8 @@ struct OrtTrainingApi {
                   _In_ OrtAllocator* allocator, _Outptr_ char** output);
 
   ORT_API2_STATUS(GetSeed, _Out_ int64_t *seed);
+  
+  ORT_API2_STATUS(AccessOpenVPIRandomSeed, _In_ int32_t type, _In_ int64_t key, _In_ int64_t value, _Out_ int64_t* out);
 };
 
 typedef struct OrtTrainingApi OrtTrainingApi;

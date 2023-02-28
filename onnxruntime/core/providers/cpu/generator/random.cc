@@ -31,6 +31,16 @@ limitations under the License.
 #include "core/providers/op_kernel_type_control.h"
 #include "core/util/math_cpuonly.h"
 
+static void updateGenerator(int64_t sessionId, size_t nodeIndex, int64_t* taskId, 
+    std::default_random_engine* generator) {
+  auto spec = onnxruntime::utils::GetSessionSpec(sessionId);
+  if (spec.taskId > 0 && spec.taskId != *taskId) {
+    //std::cout << "Update generator: " << sessionId << " " << spec.seed << std::endl;
+    *taskId = spec.taskId;
+    *generator = std::default_random_engine{gsl::narrow_cast<uint32_t>(spec.seed + nodeIndex)};
+  }
+}
+
 using namespace ONNX_NAMESPACE;
 using namespace ::onnxruntime::common;
 namespace onnxruntime {
@@ -139,6 +149,9 @@ Status RandomNormal::Compute(OpKernelContext* ctx) const {
   Tensor& Y = *ctx->Output(0, shape_);
 
   std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
+  if (sessionId_ != 0) {
+    updateGenerator(sessionId_, nodeIndex_, &taskId_, &generator_);
+  }
   auto status = RandomNormalCompute(mean_, scale_, generator_, dtype_, Y);
 
   return status;
@@ -148,6 +161,9 @@ Status RandomUniform::Compute(OpKernelContext* ctx) const {
   Tensor& Y = *ctx->Output(0, shape_);
 
   std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
+  if (sessionId_ != 0) {
+    updateGenerator(sessionId_, nodeIndex_, &taskId_, &generator_);
+  }
   auto status = RandomUniformCompute(low_, high_, generator_, dtype_, Y);
 
   return status;
@@ -170,6 +186,9 @@ Status RandomNormalLike::Compute(OpKernelContext* ctx) const {
                            X.DataType());
 
   std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
+  if (sessionId_ != 0) {
+    updateGenerator(sessionId_, nodeIndex_, &taskId_, &generator_);
+  }
   status = RandomNormalCompute(mean_, scale_, generator_, dtype, *Y);
 
   return status;
@@ -191,6 +210,9 @@ Status RandomUniformLike::Compute(OpKernelContext* ctx) const {
                            "Could not infer data type from input tensor with data type ",
                            X.DataType());
   std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
+  if (sessionId_ != 0) {
+    updateGenerator(sessionId_, nodeIndex_, &taskId_, &generator_);
+  }
   status = RandomUniformCompute(low_, high_, generator_, dtype, *Y);
 
   return status;
@@ -311,6 +333,9 @@ Status Multinomial::Compute(OpKernelContext* ctx) const {
 
   Status status = Status::OK();
   std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
+  if (sessionId_ != 0) {
+    updateGenerator(sessionId_, nodeIndex_, &taskId_, &generator_);
+  }
   switch (output_dtype_) {
     case TensorProto::INT32: {
       status = MultinomialCompute<int32_t>(ctx, X, batch_size, num_classes, num_samples_, generator_, *Y);

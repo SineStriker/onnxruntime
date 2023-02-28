@@ -78,4 +78,6 @@ ORT_API_STATUS_IMPL(TrainingSessionGetEvalModelInputName, _In_ const OrtTraining
 
 ORT_API_STATUS_IMPL(GetSeed, _Out_ int64_t* seed);
 
+ORT_API_STATUS_IMPL(AccessOpenVPIRandomSeed, _In_ int32_t type, _In_ int64_t key, _In_ int64_t value, _Out_ int64_t* out);
+
 }  // namespace OrtTrainingApis

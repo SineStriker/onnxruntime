@@ -9,6 +9,7 @@
 #include <shared_mutex>
 #include <unordered_map>
 #include <array>
+#include <algorithm>
 
 namespace onnxruntime {
 namespace utils {

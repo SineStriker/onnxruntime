@@ -27,7 +27,7 @@ int64_t GetRandomSeed();
  */
 void SetRandomSeed(int64_t seed);
 
-// OpenVPI Addition
+#ifdef OPENVPI_ORTDIST_PATCH
 bool isOpNondeterministic(const std::string& op);
 
 extern const char* SessionIdAttributeName;
@@ -46,6 +46,7 @@ struct SessionSpec {
 SessionSpec GetSessionSpec(int64_t key);
 
 void AccessOpenVPIRandomSeed(int type, int64_t key, int64_t value, int64_t *out);
+#endif
 
 }  // namespace utils
 }  // namespace onnxruntime

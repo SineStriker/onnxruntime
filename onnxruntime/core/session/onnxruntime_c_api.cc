@@ -2129,6 +2129,7 @@ ORT_API_STATUS_IMPL(OrtApis::GetExecutionProviderApi,
 
   *provider_api = nullptr;
 #ifdef USE_DML
+#ifndef OPENVPI_ORTDIST_PATCH
   if (strcmp(provider_name, "DML") == 0) {
     *provider_api = GetOrtDmlApi(version);
     if (*provider_api == nullptr) {
@@ -2136,6 +2137,7 @@ ORT_API_STATUS_IMPL(OrtApis::GetExecutionProviderApi,
     }
     return NULL;
   }
+#endif
 #endif
 
   return OrtApis::CreateStatus(ORT_INVALID_ARGUMENT, "Specified provider is not supported.");

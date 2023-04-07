@@ -860,9 +860,11 @@ void Node::Init(const std::string& name,
     }
   }
 
+#ifdef OPENVPI_ORTDIST_PATCH
   if (utils::isOpNondeterministic(op_type)) {
     AddAttribute(utils::SessionIdAttributeName, utils::GetCurrentSessionId());
   }
+#endif
 }
 
 Node::Definitions& Node::MutableDefinitions() noexcept {

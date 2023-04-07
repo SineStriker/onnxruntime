@@ -156,11 +156,39 @@ std::shared_ptr<IExecutionProviderFactory> DMLProviderFactoryCreator::Create(int
   }
 #endif
 
+#ifdef OPENVPI_ORTDIST_PATCH
+#ifdef _WIN32
+  static bool __dml_loaded = false;
+  static std::wstring *__org_dll_dir = nullptr;
+  if (!__dml_loaded){
+      __dml_loaded = true;
+
+      wchar_t buf[MAX_PATH + 1] = {0};
+      auto sz = ::GetDllDirectoryW(MAX_PATH, buf);
+      __org_dll_dir = new std::wstring(buf);
+      std::wstring runtime_path = Env::Default().GetRuntimePath();
+      if (runtime_path.back() =='/' || runtime_path.back()=='\\'){
+          runtime_path.pop_back();
+      }
+      ::SetDllDirectoryW(runtime_path.data());
+  }
+#endif
+#endif
+
   ComPtr<IDMLDevice> dml_device;
   ORT_THROW_IF_FAILED(DMLCreateDevice1(d3d12_device.Get(),
                                    flags,
                                    DML_FEATURE_LEVEL_5_0,
                                    IID_PPV_ARGS(&dml_device)));
+
+#ifdef OPENVPI_ORTDIST_PATCH
+#ifdef _WIN32
+  if (__org_dll_dir){
+      ::SetDllDirectoryW(__org_dll_dir->data());
+      delete __org_dll_dir;
+  }
+#endif
+#endif
 
   return CreateExecutionProviderFactory_DML(dml_device.Get(), cmd_queue.Get());
 }

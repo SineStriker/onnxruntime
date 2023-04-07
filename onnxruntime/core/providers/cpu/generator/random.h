@@ -47,9 +47,11 @@ class RandomNormal final : public OpKernel {
     ORT_ENFORCE(info.GetAttrs("shape", shape).IsOK());
     shape_ = TensorShape(shape);
 
+#ifdef OPENVPI_ORTDIST_PATCH
     sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
     nodeIndex_ = info.node().Index();
     taskId_ = 0;
+#endif
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -66,9 +68,11 @@ class RandomNormal final : public OpKernel {
   ONNX_NAMESPACE::TensorProto::DataType dtype_;
   TensorShape shape_;
 
+#ifdef OPENVPI_ORTDIST_PATCH
   int64_t sessionId_;
   size_t nodeIndex_;
   mutable int64_t taskId_;
+#endif
 };
 
 class RandomNormalLike final : public OpKernel {
@@ -93,9 +97,11 @@ class RandomNormalLike final : public OpKernel {
                   "Invalid dtype of ", dtype_);
     }
 
+#ifdef OPENVPI_ORTDIST_PATCH
     sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
     nodeIndex_ = info.node().Index();
     taskId_ = 0;
+#endif
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -109,9 +115,11 @@ class RandomNormalLike final : public OpKernel {
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  //optional and may be inferred
 
+#ifdef OPENVPI_ORTDIST_PATCH
   int64_t sessionId_;
   size_t nodeIndex_;
   mutable int64_t taskId_;
+#endif
 };
 
 class RandomUniform final : public OpKernel {
@@ -139,9 +147,11 @@ class RandomUniform final : public OpKernel {
     ORT_ENFORCE(info.GetAttrs("shape", shape).IsOK());
     shape_ = TensorShape(shape);
 
+#ifdef OPENVPI_ORTDIST_PATCH
     sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
     nodeIndex_ = info.node().Index();
     taskId_ = 0;
+#endif
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -156,9 +166,11 @@ class RandomUniform final : public OpKernel {
   ONNX_NAMESPACE::TensorProto::DataType dtype_;
   TensorShape shape_;
 
+#ifdef OPENVPI_ORTDIST_PATCH
   int64_t sessionId_;
   size_t nodeIndex_;
   mutable int64_t taskId_;
+#endif
 };
 
 class RandomUniformLike final : public OpKernel {
@@ -182,9 +194,11 @@ class RandomUniformLike final : public OpKernel {
                   "Invalid dtype of ", dtype_);
     }
 
+#ifdef OPENVPI_ORTDIST_PATCH
     sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
     nodeIndex_ = info.node().Index();
     taskId_ = 0;
+#endif
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -198,9 +212,11 @@ class RandomUniformLike final : public OpKernel {
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  //optional and may be inferred
 
+#ifdef OPENVPI_ORTDIST_PATCH
   int64_t sessionId_;
   size_t nodeIndex_;
   mutable int64_t taskId_;
+#endif
 };
 
 class Multinomial final : public OpKernel {
@@ -225,9 +241,11 @@ class Multinomial final : public OpKernel {
     ORT_ENFORCE(ONNX_NAMESPACE::TensorProto::DataType_IsValid(output_dtype_) && output_dtype_ != ONNX_NAMESPACE::TensorProto::UNDEFINED,
                 "Invalid dtype of ", output_dtype_);
 
+#ifdef OPENVPI_ORTDIST_PATCH
     sessionId_ = info.GetAttr<int64_t>(utils::SessionIdAttributeName, &sessionId_).IsOK() ? sessionId_ : 0;
     nodeIndex_ = info.node().Index();
     taskId_ = 0;
+#endif
   }
 
   Status Compute(OpKernelContext* ctx) const override;
@@ -240,8 +258,10 @@ class Multinomial final : public OpKernel {
   mutable onnxruntime::OrtMutex generator_mutex_;
   ONNX_NAMESPACE::TensorProto::DataType output_dtype_;
 
+#ifdef OPENVPI_ORTDIST_PATCH
   int64_t sessionId_;
   size_t nodeIndex_;
   mutable int64_t taskId_;
+#endif
 };
 }  // namespace onnxruntime

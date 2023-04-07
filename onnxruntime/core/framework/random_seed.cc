@@ -21,11 +21,14 @@ namespace utils {
 #endif
 static std::atomic<int64_t> g_random_seed(std::chrono::system_clock::now().time_since_epoch().count());
 
+
+#ifdef OPENVPI_ORTDIST_PATCH
 static std::atomic<int64_t> g_openvpi_current_session_id;
 static std::shared_mutex g_openvpi_session_seed_lock;
 static std::unordered_map<int64_t, SessionSpec> g_openvpi_session_seed_map;
 
 constexpr std::array g_nonDeterministicOps{"RandomUniform", "RandomNormal", "RandomUniformLike", "RandomNormalLike", "Multinomial"};
+#endif
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning(pop)
@@ -43,6 +46,7 @@ void SetRandomSeed(int64_t seed) {
   PhiloxGenerator::Default().SetSeed(static_cast<uint64_t>(seed));
 }
 
+#ifdef OPENVPI_ORTDIST_PATCH
 enum class OpenVPIRequestType {
     SetCurrentSessionId = 0,
     GetCurrentSessionId,
@@ -133,6 +137,7 @@ void AccessOpenVPIRandomSeed(int type, int64_t key, int64_t value, int64_t* out)
       break;
   }
 }
+#endif
 
 }  // namespace utils
 }  // namespace onnxruntime

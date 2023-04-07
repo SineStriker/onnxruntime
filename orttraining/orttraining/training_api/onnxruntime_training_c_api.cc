@@ -403,6 +403,7 @@ ORT_API_STATUS_IMPL(OrtTrainingApis::TrainingSessionGetEvalModelInputName, _In_ 
   API_IMPL_END
 }
 
+#ifdef OPENVPI_ORTDIST_PATCH
 ORT_API_STATUS_IMPL(OrtTrainingApis::GetSeed, _Out_ int64_t *seed) {
   API_IMPL_BEGIN
 
@@ -420,6 +421,7 @@ ORT_API_STATUS_IMPL(OrtTrainingApis::AccessOpenVPIRandomSeed, _In_ int32_t type,
 
   API_IMPL_END
 }
+#endif
 
 static constexpr OrtTrainingApi ort_training_api = {
     // NOTE: The C# bindings depend on the API order within this struct. Since Training APIs are not officially
@@ -451,8 +453,10 @@ static constexpr OrtTrainingApi ort_training_api = {
     &OrtTrainingApis::TrainingSessionGetEvalModelInputCount,
     &OrtTrainingApis::TrainingSessionGetTrainingModelInputName,
     &OrtTrainingApis::TrainingSessionGetEvalModelInputName,
+#ifdef OPENVPI_ORTDIST_PATCH
     &OrtTrainingApis::GetSeed,
     &OrtTrainingApis::AccessOpenVPIRandomSeed,
+#endif
 };
 
 ORT_API(const OrtTrainingApi*, OrtTrainingApis::GetTrainingApi, uint32_t) {

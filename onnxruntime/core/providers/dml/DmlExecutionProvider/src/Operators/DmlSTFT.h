@@ -378,8 +378,7 @@ public:
             ORT_THROW_IF_FAILED(executionObject.As(&commandList));
 
             ComPtr<ID3D12Resource> framingOutputResource;
-            ORT_THROW_IF_FAILED(context->AllocateTemporaryData(m_framingOperator.outputBufferSizeInBytes, &framingOutputResource));
-
+            ORT_THROW_IF_FAILED(context->AllocateTemporaryData(onnxruntime::narrow<size_t>(m_framingOperator.outputBufferSizeInBytes), &framingOutputResource));
             DispatchFramingOperator(commandList.Get(), context, framingOutputResource.Get());
 
             ComPtr<ID3D12Resource> outputResource = DmlSTFTHelpers::GetOutputResourceFromKernelContext(context, 0);
@@ -416,7 +415,9 @@ public:
         std::array<DML_BINDING_DESC, 2> inputBindings;
         uint32_t inputBindingsCount = 1;
 
-        std::array<D3D12_RESOURCE_BARRIER, 3> barriers;
+        // NOTE: avoiding std::array for barriers to avoid buggy code analysis thinking
+        // barrierCount is outside the valid range.
+        D3D12_RESOURCE_BARRIER barriers[3];
         uint32_t barrierCount = 0;
 
         ComPtr<ID3D12Resource> signalResource = DmlSTFTHelpers::GetInputResourceFromKernelContext(context, DmlSTFTKernelInputIndex::Signal);
@@ -448,7 +449,7 @@ public:
         auto tempBufferSize = bindingProps.TemporaryResourceSize;
         if (tempBufferSize > 0)
         {
-            ORT_THROW_IF_FAILED(context->AllocateTemporaryData(tempBufferSize, &tempBuffer));
+            ORT_THROW_IF_FAILED(context->AllocateTemporaryData(onnxruntime::narrow<size_t>(tempBufferSize), &tempBuffer));
 
             DML_BUFFER_BINDING bufferBinding = { tempBuffer.Get(), 0, tempBufferSize };
             DML_BINDING_DESC bindingDesc = { DML_BINDING_TYPE_BUFFER, &bufferBinding };
@@ -464,7 +465,7 @@ public:
         }
 
         // Transition resources COMMON -> UAV
-        commandList->ResourceBarrier(barrierCount, barriers.data());
+        commandList->ResourceBarrier(barrierCount, barriers);
 
         m_framingOperator.commandRecorder->RecordDispatch(
             commandList,
@@ -478,7 +479,7 @@ public:
             std::swap(barriers[barrierIndex].Transition.StateBefore, barriers[barrierIndex].Transition.StateAfter);
         }
 
-        commandList->ResourceBarrier(barrierCount, barriers.data());
+        commandList->ResourceBarrier(barrierCount, barriers);
     }
 };
 
